@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr" ng-app="app">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <title>$http reQuest</title>
+    </head>
+    <body>
+        <div ng-controller="mainController as vm">
+            <h1 class="text-center">Marvel Web API</h1>
+            <h3 class="text-center">All of your favourite heros in a single web app !</h3><br>
+
+            <div class="input-group">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 col-lg-offset-8">
+                            <form ng-submit="vm.getSearch(query)">
+                                <input ng-model="query" type="text" class="form-control" placeholder="Which Marvel character are you lookin' for ?"><br><br><br>
+                                <div class="row">
+                                    <div class="col-lg-offset-5 col-lg-4">
+                                        <span class="input-group-btn">
+                                            <button ng-click="vm.getSearch(query)" class="btn btn-default" type="button">Go!</button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div><br>
+
+            <div class="row">
+                <div class="col-lg-6 col-lg-offset-3">
+                    <div ng-repeat="characters in vm.search.results" class="thumbnail">
+                        <img ng-src="{{characters.thumbnail.path }}.{{characters.thumbnail.extension}}"/>
+                        <div class="caption">
+                            <h3>{{characters.name}}</h3><br>
+                            <p>{{characters.description}}</p><br>
+                        </div>
+
+                        <div class="btn-group" role="group" aria-label="..." style="margin-left:32%;">
+                                <button ng-click="vm.getExtras(query)" type="button" class="btn btn-default">Comics</button>
+                                <button ng-click="vm.getExtras2(query)" type="button" class="btn btn-default">Series</button>
+                                <button ng-click="vm.getExtras3(query)" type="button" class="btn btn-default">Stories</button>
+                                <button ng-click="vm.getExtras4(query)" type="button" class="btn btn-default">Events</button>
+                                <button ng-click="vm.getExtras5(query)" type="button" class="btn btn-default">Urls</button>
+                        </div><br>
+                        <div style="min-height:50vh;">
+                                <ul ng-show="vm.active">
+                                    <li ng-repeat="comic in vm.extras.items">{{comic.name}}</li>
+                                </ul>
+
+                                <ul ng-show="vm.active2">
+                                    <li ng-repeat="serie in vm.extras2.items">{{serie.name}}</li>
+                                </ul>
+
+                                <ul ng-show="vm.active3">
+                                  <li ng-repeat="storie in vm.extras3.items">{{storie.name}}</li>
+                                </ul>
+
+                                <ul ng-show="vm.active4">
+                                  <li ng-repeat="event in vm.extras4.items">{{event.name}}</li>
+                                </ul>
+
+                                <ul ng-show="vm.active5">
+                                  <li ng-repeat="url in vm.extras5">{{url.url}}</li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.0/angular.min.js"></script>
+
+        <script type="text/javascript">
+            angular.module('app', []).controller('mainController', function(marvelService) {
+                this.marvelService = marvelService;
+
+                this.getSearch = (query) => {
+                    this.marvelService.search(query).then((response) => {
+                        this.search = response.data.data;
+                        console.log(this.search);
+                    });
+                };
+
+                this.getExtras = (query) => {
+                    this.marvelService.search(query).then((response) => {
+                        this.extras = response.data.data.results[0].comics;
+                        console.log(this.extras);
+                    });
+                    this.active = true;
+                    this.active2 = false;
+                    this.active3 = false;
+                    this.active4 = false;
+                    this.active5 = false;
+
+
+                };
+
+                this.getExtras2 = (query) => {
+                    this.marvelService.search(query).then((response) => {
+                        this.extras2 = response.data.data.results[0].series;
+                        console.log(this.extras2);
+                    });
+                    this.active = false;
+                    this.active2 = true;
+                    this.active3 = false;
+                    this.active4 = false;
+                    this.active5 = false;
+
+                };
+
+                this.getExtras3 = (query) => {
+                    this.marvelService.search(query).then((response) => {
+                        this.extras3 = response.data.data.results[0].stories;
+                        console.log(this.extras3);
+                    });
+                    this.active = false;
+                    this.active2 = false;
+                    this.active3 = true;
+                    this.active4 = false;
+                    this.active5 = false;
+
+                };
+
+                this.getExtras4 = (query) => {
+                    this.marvelService.search(query).then((response) => {
+                        this.extras4 = response.data.data.results[0].events;
+                        console.log(this.extras4);
+                    });
+                    this.active = false;
+                    this.active2 = false;
+                    this.active3 = false;
+                    this.active4 = true;
+                    this.active5 = false;
+
+                };
+
+                this.getExtras5 = (query) => {
+                    this.marvelService.search(query).then((response) => {
+                        this.extras5 = response.data.data.results[0].urls;
+                        console.log(this.extras5);
+                    });
+                    this.active = false;
+                    this.active2 = false;
+                    this.active3 = false;
+                    this.active4 = false;
+                    this.active5 = true;
+                };
+
+            }).service('marvelService', function($http) {
+
+                this.search = (query) => {
+                    return $http.get("https://gateway.marvel.com/v1/public/characters?name=" + query + "&apikey=d9f81f3d27a95f638c9d7fe2b24d28e0&ts=1&hash=ef8c649bbf14656ad34ce0878eb155a2");
+                }
+            })
+        </script>
+    </body>
+</html>
